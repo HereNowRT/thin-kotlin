@@ -1,2 +1,2 @@
-# thin-kotlin
+# kotlin for android
 kotlin experimental android
