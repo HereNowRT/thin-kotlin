@@ -1,14 +1,14 @@
 package com.thin.com.tek_app
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+
+
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
-import android.support.v4.widget.DrawerLayout
-import android.support.v4.view.GravityCompat
-import android.support.v7.widget.Toolbar
-import android.support.v7.app.ActionBar
-import android.support.design.widget.NavigationView
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.ActionBar
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,10 +26,9 @@ class MainActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_menu)
         }
-
         mDrawerLayout = findViewById(R.id.drawer_layout)
-
         val navigationView: NavigationView = findViewById(R.id.nav_view)
+
         navigationView.setNavigationItemSelectedListener { menuItem ->
             // set item as selected to persist highlight
             menuItem.isChecked = true
