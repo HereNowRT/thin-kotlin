@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">TEK_APP</string>
     <string name="edit_message">Enter a message</string>
-    <string name="button_send">Send</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_chat">Discussion</string>
+    <string name="menu_place">My Places</string>
+    <string name="menu_bus">Bus Arrival Time</string>
+    <string name="menu_announcement">Transit Announcement</string>
+    <string name="menu_setting">Setting</string>
 </resources>
