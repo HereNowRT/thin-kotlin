@@ -1,5 +1,4 @@
 package com.thin.com.tek_app
-
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,8 +9,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.widget.Toolbar
 import android.support.v7.app.ActionBar
 import android.support.design.widget.NavigationView
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,12 +35,15 @@ class MainActivity : AppCompatActivity() {
             menuItem.isChecked = true
             // close drawer when item is tapped
             mDrawerLayout.closeDrawers()
-
             // Add code here to update the UI based on the item selected
             // For example, swap UI fragments here
-
             true
         }
+
+    }
+
+    fun logoClick(view: View){
+        mDrawerLayout.closeDrawers()
     }
 
     override fun onOptionsItemSelected(item: android.view.MenuItem?): kotlin.Boolean {
