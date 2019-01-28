@@ -10,9 +10,9 @@
                 android:icon="@drawable/ic_menu_bus"
                 android:title="@string/menu_bus" />
         <item
-                android:id="@+id/nav_chat"
+                android:id="@+id/nav_topic"
                 android:icon="@drawable/ic_menu_chat"
-                android:title="@string/menu_chat" />
+                android:title="@string/menu_topic" />
         <item
                 android:id="@+id/nav_place"
                 android:icon="@drawable/ic_menu_place"
@@ -22,9 +22,29 @@
                 android:icon="@drawable/ic_menu_transit"
                 android:title="@string/menu_announcement" />
         <item
-                android:id="@+id/nav_setting"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="@string/menu_setting" />
+                android:id="@+id/nav_sign_in"
+                android:icon="@drawable/ic_signin"
+                android:title="@string/menu_signin"/>
+
+        <item android:title="More">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                            android:id="@+id/nav_about"
+                            android:icon="@drawable/ic_about"
+                            android:title="@string/menu_about"/>
+                    <item
+                            android:id="@+id/nav_privacy"
+                            android:icon="@drawable/ic_policy"
+                            android:title="@string/menu_privacy"/>
+                    <item
+                            android:id="@+id/nav_setting"
+                            android:icon="@drawable/ic_menu_manage"
+                            android:title="@string/menu_setting" />
+
+                </group>
+            </menu>
+        </item>
 
     </group>
 </menu>

@@ -18,12 +18,16 @@ import androidx.core.app.ActivityCompat
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.gms.location.*
 import com.google.android.material.navigation.NavigationView
 import com.google.android.gms.maps.model.LatLng
@@ -32,10 +36,10 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mDrawerLayout: DrawerLayout
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
     private var REQUEST_LOCATION_CODE = 101
+
+    private lateinit var fragment: Fragment
 
     private var latitude: Double? = null
     private var longitude: Double? = null
@@ -43,6 +47,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if(savedInstanceState == null){
+            fragment = DashboardFragment::class.java.newInstance() as Fragment
+            addFragment(fragment,R.id.flContent)
+        }
 
         var toolbar: Toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -54,24 +63,69 @@ class MainActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_menu)
         }
+
         mDrawerLayout = findViewById(R.id.drawer_layout)
         val navigationView: NavigationView = findViewById(R.id.nav_view)
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
-            // set item as selected to persist highlight
-            menuItem.isChecked = true
-            // close drawer when item is tapped
-            mDrawerLayout.closeDrawers()
-            // Add code here to update the UI based on the item selected
-            // For example, swap UI fragments here
+            selectDrawerItem(menuItem)
             true
         }
 
         if (!checkGPSEnabled()){
             return
         }
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         getLocation()
+    }
+
+    fun selectDrawerItem(menuItem:MenuItem) {
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        var fragmentClass:Class<*> = DashboardFragment::class.java
+        when (menuItem.itemId) {
+            R.id.nav_dashboard -> fragmentClass = DashboardFragment::class.java
+            R.id.nav_topic -> fragmentClass = TopicFragment::class.java
+            R.id.nav_bus -> fragmentClass = BusFragment::class.java
+            R.id.nav_privacy -> fragmentClass = PrivacyFragment::class.java
+            R.id.nav_about -> fragmentClass = AboutFragment::class.java
+            R.id.nav_place -> fragmentClass = PlaceFragment::class.java
+            R.id.nav_announcement -> fragmentClass = AnnounceFragment::class.java
+            R.id.nav_setting -> fragmentClass = SettingFragment::class.java
+            R.id.nav_sign_in -> {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+            else -> fragmentClass = DashboardFragment::class.java
+        }
+
+        if (menuItem.itemId != R.id.nav_sign_in){
+
+            try
+            {
+                fragment = fragmentClass.newInstance() as Fragment
+            }
+            catch (e:Exception) {
+                e.printStackTrace()
+            }
+
+            replaceFragment(fragment, R.id.flContent)
+
+            var menuTitle = menuItem.title.toString()
+
+            if (menuItem.itemId == R.id.nav_dashboard){
+                getLocation()
+            }
+
+            getSupportActionBar()?.setTitle(menuTitle)
+
+            Log.i("menu_title", menuTitle)
+            Log.i("menu_item", menuItem.itemId.toString())
+            Log.i("menu_privacy", R.id.nav_privacy.toString())
+
+            menuItem.isChecked = true
+            mDrawerLayout.closeDrawer(GravityCompat.START)
+        }
 
 
     }
@@ -89,7 +143,6 @@ class MainActivity : AppCompatActivity() {
                                 this.longitude.toString()
 
                         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-                        // You can now create a LatLng Object for use with maps
                         val latLng = LatLng(location!!.latitude, location!!.longitude)
                         val geocoder = Geocoder(this, Locale.getDefault())
                         var addresses: List<Address> = emptyList()
@@ -98,8 +151,12 @@ class MainActivity : AppCompatActivity() {
                             location.longitude,
                             // In this sample, we get just a single address.
                             1)
+
                         var address = addresses[0].getAddressLine(0)
+
                         Log.i("geo address", address)
+                        Log.i("geo lat lng", latLng.toString())
+
                         getSupportActionBar()?.setTitle(address)
 
                     }
@@ -126,6 +183,7 @@ class MainActivity : AppCompatActivity() {
             showAlert()
         return isLocationEnabled()
     }
+
 
     private fun isLocationEnabled(): Boolean{
         var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -164,5 +222,19 @@ class MainActivity : AppCompatActivity() {
         mDrawerLayout.closeDrawers()
     }
 
+    inline fun FragmentManager.inTransaction(func: FragmentTransaction.() -> FragmentTransaction) {
+        beginTransaction().func().commit()
+    }
+
+    fun AppCompatActivity.addFragment(fragment: Fragment, frameId: Int){
+        supportFragmentManager.inTransaction { add(frameId, fragment) }
+    }
+
+    fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int) {
+        supportFragmentManager.inTransaction{replace(frameId, fragment)}
+    }
+
 
 }
+
+

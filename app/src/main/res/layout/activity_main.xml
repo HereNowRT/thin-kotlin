@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                            xmlns:app="http://schemas.android.com/apk/res-auto"
                                            android:id="@+id/drawer_layout"
@@ -27,25 +25,16 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <!-- The main content view where fragments are loaded -->
+        <FrameLayout
+                android:id="@+id/flContent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
 
     </LinearLayout>
 
-    <!--&lt;!&ndash; Layout to contain contents of main body of screen (drawer will slide over this) &ndash;&gt;-->
-    <!--<FrameLayout-->
-            <!--android:id="@+id/content_frame"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@drawable/rtbg"-->
-    <!--&gt;-->
-
-        <!--<androidx.appcompat.widget.Toolbar-->
-                <!--android:id="@+id/toolbar"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="?attr/actionBarSize"-->
-                <!--android:background="?attr/colorPrimary"-->
-                <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />-->
-
-    <!--</FrameLayout>-->
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <com.google.android.material.navigation.NavigationView
@@ -59,6 +48,3 @@
     />
 
 </androidx.drawerlayout.widget.DrawerLayout>
-
-
-<!-- Use DrawerLayout as root container for activity -->
