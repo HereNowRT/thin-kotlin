@@ -10,6 +10,11 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
+
+    dataBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "com.thin.com.tek_app"
         minSdkVersion rootProject.minSdkVersion
@@ -35,7 +40,9 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
     implementation "android.arch.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
     implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'

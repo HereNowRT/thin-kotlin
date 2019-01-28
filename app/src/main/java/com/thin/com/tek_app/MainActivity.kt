@@ -1,13 +1,17 @@
 package com.thin.com.tek_app
 
-
 import android.Manifest
 import android.content.Context
+import android.content.DialogInterface
 import androidx.core.content.ContextCompat
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.app.ActivityCompat
@@ -20,20 +24,21 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.google.android.material.navigation.NavigationView
+import com.google.android.gms.maps.model.LatLng
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mDrawerLayout: DrawerLayout
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private var REQUEST_LOCATION_CODE = 101
-    private var googleApiClient: GoogleApiClient? = null
-    private var locationRequest: LocationRequest? = null
-    private val UPDATE_INTERVAL = (2 * 1000).toLong()  /* 10 secs */
-    private val FASTEST_INTERVAL: Long = 2000 /* 2 sec */
+
+    private var latitude: Double? = null
+    private var longitude: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         var toolbar: Toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         getSupportActionBar()?.setTitle("Round Trip - SG")
+        toolbar.setTitleTextColor(Color.parseColor("#ffffff"))
 
         var actionBar: ActionBar? = supportActionBar
         actionBar?.apply{
@@ -64,24 +70,43 @@ class MainActivity : AppCompatActivity() {
         if (!checkGPSEnabled()){
             return
         }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        getLocation()
 
-        getLocation();
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                for (location in locationResult.locations){
-                    // Update UI with location data
-                    // ...
-                    var latitude = location.latitude.toString()
-                    var longitude = location.longitude.toString()
-                    val latLng = latitude + "," + longitude
-                    Log.d("Geo points",latLng)
-                }
+    }
+
+    private fun getLocation(){
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        this.latitude =  location?.latitude
+                        this.longitude = location?.longitude
+
+                        val msg = "Updated Location: " +
+                               this.latitude.toString() + "," +
+                                this.longitude.toString()
+
+                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                        // You can now create a LatLng Object for use with maps
+                        val latLng = LatLng(location!!.latitude, location!!.longitude)
+                        val geocoder = Geocoder(this, Locale.getDefault())
+                        var addresses: List<Address> = emptyList()
+                        addresses = geocoder.getFromLocation(
+                            location.latitude,
+                            location.longitude,
+                            // In this sample, we get just a single address.
+                            1)
+                        var address = addresses[0].getAddressLine(0)
+                        Log.i("geo address", address)
+                        getSupportActionBar()?.setTitle(address)
+
+                    }
+            }else{
+                checkLocationPermission()
             }
         }
-
-
 
     }
 
@@ -93,11 +118,6 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-
-    fun logoClick(view: View){
-        mDrawerLayout.closeDrawers()
     }
 
 
@@ -124,44 +144,25 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun getLocation(){
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    private fun checkLocationPermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog.Builder(this)
+                    .setTitle("Location Permission Needed")
+                    .setMessage("This app needs the Location permission, please accept to use location functionality")
+                    .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION_CODE)
+                    })
+                    .create()
+                    .show()
 
-
-        if (fusedLocationClient != null) {
-            Toast.makeText(this, "Location Detected", Toast.LENGTH_SHORT).show();
-
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location : Location? ->
-                    var latitude = location!!.latitude.toString()
-                    var longitude = location!!.longitude.toString()
-                    val latLng = latitude + "," + longitude
-                    Log.d("Geo points ::: ",latLng)
-                    Toast.makeText(this, latLng, Toast.LENGTH_SHORT).show();
-                    // Got last known location. In some rare situations this can be null.
-                }
-
-        }else{
-            Toast.makeText(this, "Location not Detected", Toast.LENGTH_SHORT).show();
+            } else ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION_CODE)
         }
-
     }
 
-    private fun startLocationUpdates() {
-        // Create the location request
-        locationRequest =  LocationRequest.create()?.apply {
-            interval = UPDATE_INTERVAL
-            fastestInterval = FASTEST_INTERVAL
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-        // Request location updates
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-            locationCallback,
-            null /* Looper */)
-
+    fun logoClick(view: View){
+        mDrawerLayout.closeDrawers()
     }
+
+
 }
