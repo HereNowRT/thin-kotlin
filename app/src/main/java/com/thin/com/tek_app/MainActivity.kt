@@ -142,7 +142,8 @@ class MainActivity : AppCompatActivity() {
                                this.latitude.toString() + "," +
                                 this.longitude.toString()
 
-                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
                         val latLng = LatLng(location!!.latitude, location!!.longitude)
                         val geocoder = Geocoder(this, Locale.getDefault())
                         var addresses: List<Address> = emptyList()
