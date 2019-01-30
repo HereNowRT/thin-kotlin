@@ -1,6 +1,7 @@
 package com.thin.com.tek_app
 
 import android.Manifest
+import android.content.Context
 import android.content.DialogInterface
 import androidx.core.content.ContextCompat
 import android.content.Intent
@@ -10,6 +11,7 @@ import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.location.LocationManager
 import android.nfc.Tag
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -20,31 +22,29 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.material.navigation.NavigationView
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mDrawerLayout: DrawerLayout
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-
     private var REQUEST_LOCATION_CODE = 101
     private var REQUEST_CHECK_SETTINGS = 0x1
 
@@ -90,6 +90,8 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        checkGPSEnabled()
+
         mLocationCallback = object: LocationCallback(){
             override fun onLocationResult(locationResult: LocationResult?) {
                 location = locationResult!!.lastLocation
@@ -116,11 +118,22 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun checkGPSEnabled():Boolean{
+        var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var isLocationEnable =  locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager!!.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER)
+
+        if(!isLocationEnable){
+            showAlert()
+        }
+
+        return isLocationEnable
+    }
+
     private fun setDashboardTitle(){
 
         var chkLat = latLng.latitude.toInt()
         var current_fm = fm.findFragmentByTag("dashboard_fm")
-//        Log.d("Location Fragment", current_fm?.isVisible.toString())
 
         if(current_fm != null && current_fm.isVisible){
             if(chkLat == 0){
@@ -134,7 +147,6 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 var address = addresses[0].getAddressLine(0)
-//                Log.d("Location Address::: ", address)
                 supportActionBar?.setTitle(address)
             }
         }
@@ -144,11 +156,16 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == REQUEST_LOCATION_CODE){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                initLocation()
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    initLocation()
+                }
+
             }else{
                 showAlert()
             }
+
+            return
         }
     }
 

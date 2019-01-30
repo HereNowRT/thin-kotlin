@@ -1,43 +1,19 @@
 package com.thin.com.tek_app
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import android.widget.EditText
+import com.jakewharton.rxbinding3.widget.textChanges
+import java.util.concurrent.TimeUnit
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [DashboardFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [DashboardFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class DashboardFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var listener: OnFragmentInteractionListener? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-
-
-    }
+    lateinit var txtDestination: EditText
+    lateinit var txtOrigin: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,60 +23,38 @@ class DashboardFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_dashboard, container, false)
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }
-    /**
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }**/
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        txtDestination = view.findViewById(R.id.txt_destination)
+        txtOrigin = view.findViewById(R.id.txt_origin)
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
+        var destination_subscribtion = txtDestination
+            .textChanges()
+            .skip(1)
+            .map { it.toString().toLowerCase() }
+            .distinct()
+            .filter { it.isNotBlank() }
+            .debounce(300,TimeUnit.MILLISECONDS)
+            .subscribe({
+                Log.d("Text changes @ destination: ",it.toString())
+            })
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        var origin_subscription = txtOrigin
+            .textChanges()
+            .skip(1)
+            .map { it.toString().toLowerCase() }
+            .distinct()
+            .filter { it.isNotBlank() }
+            .debounce(300,TimeUnit.MILLISECONDS)
+            .subscribe({
+                Log.d("Text changes @ origin: ",it.toString())
+            })
+
+
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DashboardFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DashboardFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
+
 
 
 

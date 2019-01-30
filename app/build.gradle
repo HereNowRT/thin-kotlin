@@ -47,8 +47,16 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.0.0-beta01'
 
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
-    implementation 'com.google.android.gms:play-services-places:16.0.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.libraries.places:places-compat:1.0.0'
+
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    implementation "com.squareup.moshi:moshi:$moshiVersion"
+
+    implementation "io.reactivex.rxjava2:rxjava:$reactxVersion"
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'

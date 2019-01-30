@@ -17,6 +17,9 @@ buildscript {
         constraintLayoutVersion = '2.0.0-alpha3'
         materialVersion = '1.0.0-beta01'
         supportLibraryVersion = '1.0.2'
+        retrofitVersion = '2.5.0'
+        reactxVersion = '2.1.14'
+        moshiVersion = '1.8.0'
     }
 
     repositories {
