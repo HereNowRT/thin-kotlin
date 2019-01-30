@@ -20,6 +20,8 @@
     <string name="lbl_enter_start">ENTER START ADDRESS</string>
     <string name="btn_go">GO</string>
 
+    <string name="google_api_key">AIzaSyCmCjZVJvI5h2Qg7XcdI9jTFjyK-IgzyQk</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>

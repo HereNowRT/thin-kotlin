@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav_route_graph"
+            app:startDestination="@id/dashboardFragment">
+
+    <fragment android:id="@+id/dashboardFragment"
+              android:name="com.thin.com.tek_app.DashboardFragment"
+              android:label="DashboardFragment">
+
+        <action android:id="@+id/action_dashboardFragment_to_routeSummaryFragment"
+                app:destination="@id/routeSummaryFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/routeSummaryFragment"
+              android:name="com.thin.com.tek_app.RouteSummaryFragment"
+              android:label="fragment_route_summary"
+              tools:layout="@layout/fragment_route_summary">
+        <action android:id="@+id/action_routeSummaryFragment_to_routeProgressFragment"
+                app:destination="@id/routeProgressFragment"/>
+
+    </fragment>
+
+    <fragment android:id="@+id/routeProgressFragment"
+              android:name="com.thin.com.tek_app.RouteProgressFragment"
+              android:label="fragment_route_progress"
+              tools:layout="@layout/fragment_route_progress"/>
+</navigation>

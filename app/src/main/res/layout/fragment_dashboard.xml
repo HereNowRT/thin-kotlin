@@ -37,7 +37,7 @@
                 android:paddingTop="6dp"
                 android:paddingBottom="6dp"
                 android:background="@drawable/right_rounded_corner"
-                android:textAlignment="center" android:layout_marginTop="12dp"
+                android:textAlignment="center" android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/editText"/>
         <EditText
                 android:layout_width="0dp"
@@ -50,7 +50,7 @@
                 android:id="@+id/editText"
                 android:hint="@string/lbl_enter_desti"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/textView" android:layout_marginEnd="50dp"
                 app:layout_constraintEnd_toEndOf="parent" android:textColor="@color/colorPrimary"
                 android:importantForAutofill="no"/>
@@ -67,7 +67,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginEnd="50dp"
                 app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
-                android:layout_marginTop="12dp" app:layout_constraintTop_toBottomOf="@+id/textView2"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView2"
                 android:textColor="@color/colorPrimary" android:autofillHints=""/>
 
         <Button
@@ -75,11 +75,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rightcorner_gobutton"
-                android:id="@+id/button"
-                android:layout_marginTop="12dp"
+                android:id="@+id/btn_navigate_route_summary"
                 app:layout_constraintTop_toBottomOf="@+id/editText2"
                 app:layout_constraintStart_toStartOf="parent"
-                android:textSize="30sp"/>
+                android:textSize="30sp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+        />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
